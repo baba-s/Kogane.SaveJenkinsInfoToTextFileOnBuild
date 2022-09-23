@@ -23,9 +23,11 @@ namespace Kogane.Internal
 
         protected override void OnStart( BuildReport report )
         {
-            if ( !Application.isBatchMode ) return;
-
             Refresh();
+
+#if KOGANE_DISABLE_SAVE_JENKINS_INFO_TO_TEXT_FILE_ON_BUILD
+#else
+            if ( !Application.isBatchMode ) return;
 
             var setting = SaveJenkinsInfoToTextFileOnBuildSetting.instance;
             var options = CommandLineParser.ParseFromCommandLineArgs<Options>();
@@ -44,12 +46,16 @@ namespace Kogane.Internal
             var path = $"{DIRECTORY_NAME}/{setting.FileName}";
             File.WriteAllText( path, result );
             AssetDatabase.ImportAsset( path );
+#endif
         }
 
+#if KOGANE_DISABLE_SAVE_JENKINS_INFO_TO_TEXT_FILE_ON_BUILD
+#else
         protected override void OnComplete()
         {
             Refresh();
         }
+#endif
 
         private static void Refresh()
         {
