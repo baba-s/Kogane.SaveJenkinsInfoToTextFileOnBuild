@@ -25,6 +25,8 @@ namespace Kogane.Internal
         {
             if ( !Application.isBatchMode ) return;
 
+            Refresh();
+
             var setting = SaveJenkinsInfoToTextFileOnBuildSetting.instance;
             var options = CommandLineParser.ParseFromCommandLineArgs<Options>();
 
@@ -46,7 +48,13 @@ namespace Kogane.Internal
 
         protected override void OnComplete()
         {
+            Refresh();
+        }
+
+        private static void Refresh()
+        {
             var directoryName = Path.GetDirectoryName( DIRECTORY_NAME );
+            if ( !AssetDatabase.IsValidFolder( directoryName ) ) return;
             AssetDatabase.DeleteAsset( directoryName );
         }
     }
