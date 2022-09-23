@@ -1,0 +1,21 @@
+{
+    "name": "Kogane.SaveJenkinsInfoToTextFileOnBuild",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9d2eef409ec956d4a83935697e6cec7f",
+        "GUID:46582f93dcf8a1a409b3a84c78e8d2e6"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "!KOGANE_DISABLE_SAVE_JENKINS_INFO_TO_TEXT_FILE_ON_BUILD"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
