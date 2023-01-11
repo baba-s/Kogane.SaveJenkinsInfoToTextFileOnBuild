@@ -1,13 +1,15 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using JetBrains.Annotations;
+using Kogane.Internal;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace Kogane.Internal
+namespace Kogane
 {
-    internal sealed class SaveJenkinsInfoToTextFileOnBuild : CompletableProcessBuildWithReportBase
+    public sealed class SaveJenkinsInfoToTextFileOnBuild : CompletableProcessBuildWithReportBase
     {
         private sealed class Options
         {
@@ -22,14 +24,17 @@ namespace Kogane.Internal
 
         private static readonly string DIRECTORY_NAME = $"Assets/{nameof( SaveJenkinsInfoToTextFileOnBuild )}/Resources";
 
+        public static Func<bool> OnIsRelease { get; set; }
+
+        private static bool IsRelease => OnIsRelease?.Invoke() ?? false;
+
         protected override void OnStart( BuildReport report )
         {
             // リリースビルドにテキストファイルが含まれないように
             // ビルド開始時に削除しています
             Refresh();
 
-#if KOGANE_DISABLE_SAVE_JENKINS_INFO_TO_TEXT_FILE_ON_BUILD
-#else
+            if ( IsRelease ) return;
             if ( !Application.isBatchMode ) return;
 
             var setting = SaveJenkinsInfoToTextFileOnBuildSetting.instance;
@@ -49,16 +54,13 @@ namespace Kogane.Internal
             var path = $"{DIRECTORY_NAME}/{setting.FileName}";
             File.WriteAllText( path, result, Encoding.UTF8 );
             AssetDatabase.ImportAsset( path );
-#endif
         }
 
-#if KOGANE_DISABLE_SAVE_JENKINS_INFO_TO_TEXT_FILE_ON_BUILD
-#else
         protected override void OnComplete()
         {
+            if ( IsRelease ) return;
             Refresh();
         }
-#endif
 
         private static void Refresh()
         {
